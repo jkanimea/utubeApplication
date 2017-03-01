@@ -1,0 +1,65 @@
+﻿
+@model UtubeApplication.Models.Video
+
+@{
+    ViewBag.Title = "DisplayVideo";
+}
+
+<h2>Display Video</h2>
+
+<div class="container">
+    <iframe width="560" height="315" src="http://www.youtube.com/embed/@Model.URL" frameborder="0"></iframe>
+    <h2>@Model.Title</h2>
+    <h5>Description</h5> <p>@Model.Description</p>
+
+    <p> <strong>Published on @Model.CreatedOn</strong>
+     </p>
+
+    <div id="comment-container">
+
+        <textarea class="form-control form-group" placeholder="Add Comment" id="comment-content"></textarea>
+        <div id="comment-list" >
+            @{ Html.RenderAction("LoadVideoComment", "Video", new { videoId = Model.Id });} 
+        </div>
+        <div>
+
+        </div>
+
+       <input type="button" value="submit" class="btn btn-default" id="submit-comment-btn" />
+
+    </div>
+
+</div>
+
+<script>
+
+
+    $("#submit-comment-btn").click(function () {
+        alert("Click the Submit button");
+        debugger;
+        var videoId = @Model.Id;
+        //Send to /Video/AddComment
+        var commentContent = $('#comment-content').val();
+        $.ajax({
+            url: '/Video/AddComment',
+            type: "POST",
+            dataType: "json",
+            data: { videoId:videoId, comment: commentContent },
+            success: function (result) {
+                debugger;
+
+                if (result.Success) {
+                    //Todo list open a new page that show Video Listing from the Video Table
+                    $("#comment-list").load("/Video/LoadVideoComment/?videoId=" + videoId);
+                  
+                }
+            }
+
+        })
+
+
+    })
+
+
+
+</script>

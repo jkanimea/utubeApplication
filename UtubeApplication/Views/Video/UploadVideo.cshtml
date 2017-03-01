@@ -1,0 +1,133 @@
+﻿
+@using UtubeApplication.ViewModel
+@using UtubeApplication.Models
+@{
+    ViewBag.Title = "UploadVideo";
+}
+
+<h4>UploadVideo</h4>
+
+<form id="add-new-videos">
+    <div class="row form-group">
+        <div class="col-md-6">
+            @*<label>Channel</label>*@
+
+            <select name="ChannelDropDown">
+                <option value="0">Please choose Channel</option>/>
+                @*Comment  for loop to upload channel *@
+                @foreach (var channel in (List<Channel>)ViewBag.ChannelList)
+            {
+                    <option value="@channel.Id">@channel.ChannelName</option>
+                }
+
+            </select>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-info" data-toggle="modal" data-target="#create-new-channel-modal">Add Channel</button>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-6">
+            Video Name
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="Name" />
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-6">
+            Video Description
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="Description" />
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-6">
+            Video Url
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="Url" />
+        </div>
+    </div>
+    <button class="btn btn-primary" style="text-align:center" id="saveVideobtn">Save</button>
+</form>
+<div class="modal fade" id="create-new-channel-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form id="add-new-channel">
+                    <div class="form-group">
+                        <label class="control-label">Channel name</label>
+                        <input type="text" name="Name" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Channel description</label>
+                        <textarea name="Description" class="form-control" rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="add-new-channel-btn">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $('#add-new-channel-btn').click(function () {
+        alert("Button click");
+        debugger;
+        var formData = $('#add-new-channel').serialize();
+        //ajax view information channel detail to /Video/CreateNewChannel
+        $.ajax({
+            url: '/Video/CreateNewChannel',
+            type: "POST",
+            dataType: "json",
+            data: formData,
+            success: function (result) {
+                debugger;
+                alert("Channel save " + result.Success);
+                if (result.Success) {
+                    //append new option to dropdown list
+                    var newOption = "<option value=" + result.ChannelId + ">" + result.ChannelName + "</option>";
+                    $("select[name='ChannelDropDown']").append(newOption);
+                }
+            }
+
+        })
+
+
+    })
+
+    $('#saveVideobtn').click(function () {
+        alert('Save video button clicked');
+        debugger;
+        var formData = $('#add-new-videos').serialize();
+        //using ajax to send video information to 'Video/UploadVideo 
+        $.ajax({
+            url: '/Video/UploadVideo',
+            type: "POST",
+            dataType: "json",
+            data: formData,
+            success: function (result) {
+                debugger;
+              
+                if (result.Success) {
+                    //Todo list open a new page that show Video Listing from the Video Table
+                    window.location.href = "@Url.Action("VideoManagement","Video")";
+                }
+            }
+
+        })
+
+    })
+
+</script>

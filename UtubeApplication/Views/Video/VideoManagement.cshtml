@@ -1,0 +1,47 @@
+﻿@model  IEnumerable<UtubeApplication.Models.Video>
+
+
+@{ 
+    ViewBag.Title = "VideoManagement";
+}
+
+<h2>Video Management</h2>
+
+<div class="container">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Channel Name</th>
+                <th>Title</th>
+                <th class="description">Description</th>
+                <th>Url</th>
+                <th>Uploaded on</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var video in Model)
+            {
+                <tr>
+                    <td>@video.Channel.ChannelName</td>
+                    <td><a href="@Url.Action("DisplayVideo","Video", new {id = video.Id})">@video.Title</a></td>
+                    <td>@video.Description</td>
+                    <td>@video.URL</td>
+                    <td>@video.CreatedOn</td>
+                 
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+</div>
+
+<style>
+    .description {
+        width: 350px;
+    }
+</style>
+
+
